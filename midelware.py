@@ -1,12 +1,23 @@
-# Unicamente comentarios agregados 17/10/2024 
+""" 
+    Unicamente comentarios agregados 17/10/2024 
+    Importando bibliotecas que ya implementan a sockets (los dos tipos: servidor y cliente), biblioteca
+    'time' para revisar la hora del sistema, biblioteca 'threading' que permite iniciar hilos (un hilo para la
+    interfaz del usuario <permanente>, un hilo para que el socket servidor este levantado <permanente> y un 
+    hilo que nace solo cuando se envian los mensajes <temporal> y luego muere) y la biblioteca 'sys' para tareas
+    como terminar el programa
+""" 
 import socket
 import time
 import threading
 import sys
 
+"""
+    Funcion main() que es controlada por el hilo principal. Sirve para ordenar que nasca el hilo del socket servidor
+    que siempre estara activo y mostrar el menu al usuario
+"""
 def main():
-    server_thread = threading.Thread(target=servidor)
-    server_thread.start()
+    server_thread = threading.Thread(target=servidor)    # Variable que reserva un hilo
+    server_thread.start()    # Metodo para dar inicio al hilo (nacimiento del hilo)
 
     while True:
         print("\nSistema Distribuido")
@@ -28,12 +39,16 @@ def main():
         else:
             print("\nError")
 
+"""
+    Funcion que permite conocer la direccion IP de un socket
+"""
 def conexion():
     try:
-        with socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as s:
-            s.connect(("8.8.8.8", 80))
+        with socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as s:    # Reserva una variable llamada 's' de tipo socket donde el primer parametro
+                                                                       # es el protocolo IPv4 y el segundo parametro es el tipo de comunicacion 
+            s.connect(("8.8.8.8", 80))        # El socket creado realiza una conexion con la IP de google y el puerto que tiene (80) 
             #ip_address = s.getsockname()[0]
-            return s.getsockname()[0]
+            return s.getsockname()[0]        # Retorno de la direccion IP del socket creado
     except Exception as e:
         print("Se ha detectado un error:", e)
         return None
@@ -59,6 +74,13 @@ def servidor():
     except Exception as e:
         print("\nError", e)
 
+
+"""
+    Funcion que recibe 'ip_host' que es una direccion IP devuelta por la funcion (conexion()) y es la forma de
+    conocer cual es la IP de la maquina que escribe el mensaje, se leen las direcciones del archivo 'catalogo.txt'
+    y se imprimen omitiendo la IP antes mencionada.
+    Se pide que escojan una opcion 
+"""
 def instruccion_datos(ip_host):
     try:
         with open("catalogo.txt", "r") as file:
